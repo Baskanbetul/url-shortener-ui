@@ -3,7 +3,6 @@ import './UrlContainer.css';
 
 const UrlContainer = props => {
   const urlEls = props.urls.map(url => {
-    // console.log(url, "URL")
     return (
       <div className="url"  key={url.id}>
         <h3>{url.title}</h3>
