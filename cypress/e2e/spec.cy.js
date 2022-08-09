@@ -16,7 +16,34 @@ describe('Burrito Builder', () => {
     cy.get('[placeholder="Title..."]').type('name')
     cy.get('[placeholder="URL to Shorten..."]').type('urlToShorten')
   })
+})
   
- 
+  describe('POST requests', () => {
+    beforeEach(() => {
+      cy.intercept('POST', 'http://localhost:3001/api/v1/orders', { fixture: 'mockData.json' })
+        .visit('http://localhost:3000')
+      cy.intercept({
+        method: 'POST',
+        url: 'http://localhost:3001/api/v1/orders'},
+        {
+          statusCode: 201,
+          body: {
+            "id": "3",
+            "long_url": "https://www.pinterest.com/pin/409405422386885268/",
+            "short_url": "http://localhost:3001/useshorturl/1",
+            "title": "Husky"
+          }
+        })
+    })
+  
+    it('should display the new url image when form is submitted', () => {
+      cy.get('[placeholder="Title..."]').should('be.visible')
+      cy.get('[placeholder="URL to Shorten..."]').should('be.visible')
+      cy.get('[placeholder="Title..."]').type('Husky')
+      cy.get('[placeholder="URL to Shorten..."]').type('https://www.pinterest.com/pin/409405422386885268/')
+      cy.get('button').click()
+      cy.get(':nth-child(3) > a').contains('http://localhost:3001/useshorturl/3')
+      cy.get(':nth-child(3) > p').contains('https://www.pinterest.com/pin/409405422386885268/')
+    })
 
 })
